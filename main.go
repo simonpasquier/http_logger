@@ -38,7 +38,7 @@ func main() {
 		}
 		sort.Strings(headers)
 		for _, v := range headers {
-			fmt.Fprintf(mw, "%v: %v\n", v, r.Header[v])
+			fmt.Fprintf(mw, "%v: %v\n", v, r.Header.Get(v))
 		}
 		if body, err := ioutil.ReadAll(r.Body); err == nil {
 			if len(body) > 0 {

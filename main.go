@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"io"
@@ -27,19 +28,24 @@ func main() {
 		os.Exit(0)
 	}
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		mw := io.MultiWriter(w, os.Stdout)
-		log.Println("Processing request")
-		fmt.Fprintf(mw, "Host: %v\n", r.Host)
-		fmt.Fprintf(mw, "URI: %v\n", r.URL)
-		fmt.Fprintf(mw, "Method: %v\n", r.Method)
+		var b bytes.Buffer
+
+		mw := io.MultiWriter(w, &b)
+
+		fmt.Fprintf(mw, "Processing request\n")
+		fmt.Fprintf(mw, "> Host: %v\n", r.Host)
+		fmt.Fprintf(mw, "> URI: %v\n", r.URL)
+		fmt.Fprintf(mw, "> Method: %v\n", r.Method)
+
 		headers := make([]string, 0, len(r.Header))
 		for k, _ := range r.Header {
 			headers = append(headers, k)
 		}
 		sort.Strings(headers)
 		for _, v := range headers {
-			fmt.Fprintf(mw, "%v: %v\n", v, r.Header.Get(v))
+			fmt.Fprintf(mw, "> %v: %v\n", v, r.Header.Get(v))
 		}
+
 		if body, err := ioutil.ReadAll(r.Body); err == nil {
 			if len(body) > 0 {
 				fmt.Fprintln(mw, "")
@@ -48,6 +54,7 @@ func main() {
 		} else {
 			log.Println("Failed to read body:", err)
 		}
+		log.Println(b.String())
 	})
 
 	log.Println("Listening on", listen)

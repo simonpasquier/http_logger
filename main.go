@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -38,7 +39,7 @@ func main() {
 		fmt.Fprintf(mw, "> Method: %v\n", r.Method)
 
 		headers := make([]string, 0, len(r.Header))
-		for k, _ := range r.Header {
+		for k := range r.Header {
 			headers = append(headers, k)
 		}
 		sort.Strings(headers)
@@ -49,7 +50,13 @@ func main() {
 		if body, err := ioutil.ReadAll(r.Body); err == nil {
 			if len(body) > 0 {
 				fmt.Fprintln(mw, "")
-				fmt.Fprintln(mw, string(body))
+				if r.Header.Get("Content-Type") == "application/json" {
+					var o bytes.Buffer
+					json.Indent(&o, body, "", "  ")
+					fmt.Fprintln(mw, o.String())
+				} else {
+					fmt.Fprintln(mw, string(body))
+				}
 			}
 		} else {
 			log.Println("Failed to read body:", err)

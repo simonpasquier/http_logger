@@ -16,4 +16,4 @@ You can make the server wait an extra period of time before returning to the cli
 curl http://localhost:8080/?sleep=1s
 ```
 
-The `sleep` parameter can be any duration string supported by `[time.ParseDuration()]`(https://golang.org/pkg/time/#ParseDuration).
+The `sleep` parameter can be any duration string supported by [`time.ParseDuration()`](https://golang.org/pkg/time/#ParseDuration).

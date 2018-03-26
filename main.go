@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"time"
 )
 
 var help bool
@@ -62,6 +63,12 @@ func main() {
 			log.Println("Failed to read body:", err)
 		}
 		log.Println(b.String())
+
+		// Wait an optional time before returning to the client.
+		q := r.URL.Query()
+		if d, err := time.ParseDuration(q.Get("sleep")); err == nil {
+			time.Sleep(d)
+		}
 	})
 
 	log.Println("Listening on", listen)

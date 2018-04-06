@@ -12,6 +12,8 @@ import (
 	"os"
 	"sort"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var help bool
@@ -29,6 +31,7 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(0)
 	}
+	http.HandleFunc("/metrics", promhttp.Handler().ServeHTTP)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		var b bytes.Buffer
 

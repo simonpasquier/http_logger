@@ -18,10 +18,12 @@ import (
 
 var help bool
 var listen string
+var status int
 
 func init() {
 	flag.BoolVar(&help, "help", false, "Help message")
 	flag.StringVar(&listen, "listen-address", ":8080", "Listen address")
+	flag.IntVar(&status, "http-status", 200, "HTTP status response code")
 }
 
 func main() {
@@ -35,6 +37,7 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		var b bytes.Buffer
 
+		w.WriteHeader(status)
 		mw := io.MultiWriter(w, &b)
 
 		fmt.Fprintf(mw, "Processing request\n")

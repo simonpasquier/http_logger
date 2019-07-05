@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"sort"
@@ -19,6 +20,7 @@ import (
 var help bool
 var listen string
 var status int
+var rnd = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 func init() {
 	flag.BoolVar(&help, "help", false, "Help message")
@@ -73,6 +75,10 @@ func main() {
 		// Wait an optional time before returning to the client.
 		q := r.URL.Query()
 		if d, err := time.ParseDuration(q.Get("sleep")); err == nil {
+			if _, ok := q["random"]; ok {
+				d = time.Duration(float64(d) * rnd.Float64())
+			}
+			log.Printf("Sleeping for %s", d)
 			time.Sleep(d)
 		}
 	})

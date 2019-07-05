@@ -40,7 +40,7 @@ func main() {
 		w.WriteHeader(status)
 		mw := io.MultiWriter(w, &b)
 
-		fmt.Fprintf(mw, "Processing request\n")
+		fmt.Fprintf(mw, "Processing request from %s\n", r.RemoteAddr)
 		fmt.Fprintf(mw, "> Host: %v\n", r.Host)
 		fmt.Fprintf(mw, "> URI: %v\n", r.URL)
 		fmt.Fprintf(mw, "> Method: %v\n", r.Method)

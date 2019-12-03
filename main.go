@@ -19,6 +19,7 @@ import (
 
 var help bool
 var listen string
+var path string
 var status int
 var rnd = rand.New(rand.NewSource(time.Now().UnixNano()))
 
@@ -26,6 +27,7 @@ func init() {
 	flag.BoolVar(&help, "help", false, "Help message")
 	flag.StringVar(&listen, "listen-address", ":8080", "Listen address")
 	flag.IntVar(&status, "http-status", 200, "HTTP status response code")
+	flag.StringVar(&path, "path", "/", "URL path")
 }
 
 func main() {
@@ -36,7 +38,7 @@ func main() {
 		os.Exit(0)
 	}
 	http.HandleFunc("/metrics", promhttp.Handler().ServeHTTP)
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 		var b bytes.Buffer
 
 		w.WriteHeader(status)
@@ -83,6 +85,6 @@ func main() {
 		}
 	})
 
-	log.Println("Listening on", listen)
+	log.Printf("Listening on %s, path: %s\n", listen, path)
 	log.Fatal(http.ListenAndServe(listen, nil))
 }

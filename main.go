@@ -37,7 +37,6 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(0)
 	}
-	http.HandleFunc("/metrics", promhttp.Handler().ServeHTTP)
 	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 		var b bytes.Buffer
 
@@ -84,6 +83,9 @@ func main() {
 			time.Sleep(d)
 		}
 	})
+	if path != "/metrics" {
+		http.HandleFunc("/metrics", promhttp.Handler().ServeHTTP)
+	}
 
 	log.Printf("Listening on %s, path: %s\n", listen, path)
 	log.Fatal(http.ListenAndServe(listen, nil))

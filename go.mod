@@ -1,6 +1,6 @@
 module github.com/simonpasquier/http_logger
 
-go 1.12
+go 1.19
 
 require (
 	github.com/gogo/protobuf v1.2.1 // indirect
